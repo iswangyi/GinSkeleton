@@ -6,7 +6,6 @@ import (
 	"go.uber.org/zap"
 	"goskeleton/app/global/consts"
 	"goskeleton/app/global/variable"
-	"goskeleton/app/http/controller/captcha"
 	"goskeleton/app/http/middleware/authorization"
 	"goskeleton/app/http/middleware/cors"
 	validatorFactory "goskeleton/app/http/validator/core/factory"
@@ -59,23 +58,23 @@ func InitWebRouter() *gin.Engine {
 	})
 
 	//处理静态资源（不建议gin框架处理静态资源，参见 public/readme.md 说明 ）
-	router.Static("/public", "./public")             //  定义静态资源路由与实际目录映射关系
-	router.StaticFS("/dir", http.Dir("./public"))    // 将public目录内的文件列举展示
-	router.StaticFile("/abcd", "./public/readme.md") // 可以根据文件名绑定需要返回的文件名
+	//router.Static("/public", "./public")             //  定义静态资源路由与实际目录映射关系
+	//router.StaticFS("/dir", http.Dir("./public"))    // 将public目录内的文件列举展示
+	//router.StaticFile("/abcd", "./public/readme.md") // 可以根据文件名绑定需要返回的文件名
 
 	// 创建一个验证码路由
-	verifyCode := router.Group("captcha")
-	{
-		// 验证码业务，该业务无需专门校验参数，所以可以直接调用控制器
-		verifyCode.GET("/", (&captcha.Captcha{}).GenerateId)                          //  获取验证码ID
-		verifyCode.GET("/:captcha_id", (&captcha.Captcha{}).GetImg)                   // 获取图像地址
-		verifyCode.GET("/:captcha_id/:captcha_value", (&captcha.Captcha{}).CheckCode) // 校验验证码
-	}
+	//verifyCode := router.Group("captcha")
+	//{
+	//	// 验证码业务，该业务无需专门校验参数，所以可以直接调用控制器
+	//	verifyCode.GET("/", (&captcha.Captcha{}).GenerateId)                          //  获取验证码ID
+	//	verifyCode.GET("/:captcha_id", (&captcha.Captcha{}).GetImg)                   // 获取图像地址
+	//	verifyCode.GET("/:captcha_id/:captcha_value", (&captcha.Captcha{}).CheckCode) // 校验验证码
+	//}
 	//  创建一个后端接口路由组
-	backend := router.Group("/admin/")
+	backend := router.Group("/user/")
 	{
 		// 创建一个websocket,如果ws需要账号密码登录才能使用，就写在需要鉴权的分组，这里暂定是开放式的，不需要严格鉴权，我们简单验证一下token值
-		backend.GET("ws", validatorFactory.Create(consts.ValidatorPrefix+"WebsocketConnect"))
+		//backend.GET("ws", validatorFactory.Create(consts.ValidatorPrefix+"WebsocketConnect"))
 
 		//  【不需要token】中间件验证的路由  用户注册、登录
 		noAuth := backend.Group("users/")
